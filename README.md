@@ -1,47 +1,15 @@
-# "Laravel Backends for Vue.js 3" Front End Source Code
+# Shortify UI
 
-[![](https://vueschool.io/media/1b4b17d7dfaf4a708fbd160ba767b6d8/laravel-backends-for-vue-js-3-not-transparent.jpg)](https://vueschool.io/courses/laravel-backends-for-vue-js-3)
+Shortify is a modern and efficient URL shortener application built with Laravel and Nuxt.js. Simplify and share your long URLs with ease, creating concise and memorable short links.
 
-This repository contains the front end source code for the course: "Laravel Backends for Vue.js 3".
+## Features
 
-The main branch is the starting point for the course (the boilerplate code) and the solutions branch
-includes commits for each lesson.
+- **User-Friendly:** Intuitive UI for easy URL shortening.
+- **Custom Short URLs:** Create branded short links.
+- **Secure:** Follows industry-standard security practices.
 
-## Setup
+## Tech Stack
 
-Make sure to install the dependencies:
-
-```bash
-# yarn
-yarn install
-
-# npm
-npm install
-
-# pnpm
-pnpm install --shamefully-hoist
-```
-
-## Development Server
-
-Start the development server on http://localhost:3000
-
-```bash
-npm run dev
-```
-
-## Production
-
-Build the application for production:
-
-```bash
-npm run build
-```
-
-Locally preview production build:
-
-```bash
-npm run preview
-```
-
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+- **Backend:** Laravel
+- **Frontend:** Nuxt 3
+- **Database:** MySQL
