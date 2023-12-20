@@ -13,16 +13,19 @@ interface RegisterPayload {
 }
 
 const form = ref({
-  name: '',
-  email: '',
-  password: '',
-  password_confirmation: ''
+  name: 'test2',
+  email: 'test2@mail.com',
+  password: '12345678',
+  password_confirmation: '12345678'
 })
 
 async function register(payload: RegisterPayload) {
-  // const res = await axios.post('/register', payload)
-  const res = await axios.get('/user')
-  console.log(res);
+  await axios.post('/register', payload)
+  await axios.post('/login', {
+    email: payload.email,
+    password: payload.password
+  })
+  useRouter().push('/me')
   
 }
 
