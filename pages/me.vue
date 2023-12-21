@@ -1,10 +1,11 @@
 <script lang="ts" setup>
-import axios from 'axios';
 definePageMeta({
   middleware: ['auth']
 })
 
-const { data: user } = await axios.get('/user')
+// no need for calling initUser function here,
+// because we initialize user in auth middleware before going to protected routes
+const { user } = useAuth()
 </script>
 
 <template>
