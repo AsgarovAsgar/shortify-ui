@@ -17,7 +17,7 @@ const user = ref<User | null>(null)
 export const useAuth = () => {
 
   async function getUser(): Promise<User | null> {
-    // if user aleady exist, return current user
+    // if user aleady exists, return current user
     if(user.value) return user.value
     try {
       const res = await axios.get('/user')
