@@ -1,3 +1,9 @@
+<script lang="ts" setup>
+  definePageMeta({
+    middleware: ['auth']
+  })
+</script>
+
 <template>
   <h1>Update Link</h1>
   <GoBack>or go back to links</GoBack>
