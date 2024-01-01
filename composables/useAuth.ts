@@ -1,16 +1,5 @@
 import axios from "axios"
-
-interface User {
-  email: string;
-  email_verified_at?: Date;
-  id: number;
-  name: string;
-  two_factor_confirmed_at?: Date;
-  two_factor_recovery_codes?: number;
-  two_factor_secret?: string;
-  created_at: Date;
-  updated_at: Date
-}
+import type { User, LoginPayload, RegisterPayload } from '@/types'
 
 const user = ref<User | null>(null)
 
@@ -38,10 +27,6 @@ export const useAuth = () => {
     user.value = await getUser()
   }
 
-  interface LoginPayload {
-    email: string;
-    password: string
-  }
   // login
   async function login(payload: LoginPayload) {
     await axios.post('/login', payload)
@@ -55,12 +40,6 @@ export const useAuth = () => {
   }
 
   // register
-  interface RegisterPayload {
-    name: string
-    email: string
-    password: string
-    password_confirmation: string
-  }
   async function register(payload: RegisterPayload) {
     await axios.post('/register', payload)
     await login({
