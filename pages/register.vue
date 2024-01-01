@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import type { RegisterPayload } from '@/types';
+import type { FormKitNode } from '@formkit/core'
+
 definePageMeta({
   layout: "centered",
   middleware: ['guest']
@@ -6,19 +9,33 @@ definePageMeta({
 
 const { register } = useAuth()
 
-const form = ref({
-  name: 'test2',
-  email: 'test2@mail.com',
-  password: '12345678',
-  password_confirmation: '12345678'
-})
+// const form = ref({
+//   name: 'test2',
+//   email: 'test2@mail.com',
+//   password: '12345678',
+//   password_confirmation: '12345678'
+// })
+
+async function handleRegister(payload: RegisterPayload, node?: FormKitNode) {
+  try {
+    await register(payload)
+  } catch (err) {
+    handleInvalidForm(err, node)
+  }
+}
 
 </script>
 
 <template>
   <div class="register">
     <h1>Register</h1>
-    <form @submit.prevent="register(form)">
+    <FormKit type="form" @submit="handleRegister">
+      <FormKit label="Name" name="name" type="text"/>
+      <FormKit label="Email" name="email" type="email"/>
+      <FormKit label="Password" name="password" type="password"/>
+      <FormKit label="Confirm Password" name="password" type="password"/>
+    </FormKit>
+    <!-- <form @submit.prevent="register(form)">
       <label>
         <div>Name</div>
         <input type="text" v-model="form.name" />
@@ -40,7 +57,7 @@ const form = ref({
       </label>
 
       <button class="btn">Register</button>
-    </form>
+    </form> -->
 
     <p>
       Already have an account?
