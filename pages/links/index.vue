@@ -1,12 +1,26 @@
 <script setup lang="ts">
 import axios from 'axios';
+import { TailwindPagination } from 'laravel-vue-pagination'
+import type { PaginatedResponse, Link } from '@/types'
 
-definePageMeta({
-  middleware: ['auth']
+definePageMeta({ middleware: ['auth'] })
+
+const data = ref<PaginatedResponse<Link> | null>(null)
+const page = ref(useRoute().query.page || 1)
+
+await getLinks()
+const links = computed(() => data.value?.data)
+
+watch(page, async () => {
+  getLinks()
+  useRouter().push({query: { page: page.value }})
 })
 
-const { data } = await axios.get('/links')
-const links = data.data
+async function getLinks() {
+  const { data: resData } = await axios.get(`/links?page=${page.value}`)
+  data.value = resData
+}
+
 </script>
 
 <template>
@@ -22,7 +36,7 @@ const links = data.data
     </nav>
 
     <div v-if="true">
-      <table class="table-fixed w-full">
+      <table class="mb-2 table-fixed w-full">
         <thead>
           <tr>
             <th class="w-[5%]">N</th>
@@ -62,6 +76,10 @@ const links = data.data
           </tr>
         </tbody>
       </table>
+      <TailwindPagination 
+        :data="data"
+        @pagination-change-page="page = $event"
+      />
       <div class="mt-5 flex justify-center"></div>
     </div>
 
