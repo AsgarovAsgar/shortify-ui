@@ -1,29 +1,14 @@
 <script setup lang="ts">
+import axios from 'axios';
+
 definePageMeta({
   middleware: ['auth']
 })
 
-const links = [
-  {
-    short_link: "234jlsfsf",
-    full_link: "https://vueschool.io",
-    views: 3,
-    id: 1,
-  },
-  {
-    short_link: "adfaowerw",
-    full_link: "https://google.com",
-    views: 1,
-    id: 2,
-  },
-  {
-    short_link: "234sfdjaip",
-    full_link: "https://vuejsnation.com/",
-    views: 0,
-    id: 3,
-  },
-];
+const { data } = await axios.get('/links')
+const links = data.data
 </script>
+
 <template>
   <div>
     <nav class="flex justify-between mb-4 items-center">
@@ -40,8 +25,9 @@ const links = [
       <table class="table-fixed w-full">
         <thead>
           <tr>
+            <th class="w-[5%]">N</th>
             <th class="w-[35%]">Full Link</th>
-            <th class="w-[35%]">Short Link</th>
+            <th class="w-[30%]">Short Link</th>
             <th class="w-[10%]">Views</th>
             <th class="w-[10%]">Edit</th>
             <th class="w-[10%]">Trash</th>
@@ -51,30 +37,23 @@ const links = [
           </tr>
         </thead>
         <tbody>
-          <tr v-for="link in links">
+          <tr v-for="(link, index) in links">
+            <td>{{ index + 1 }}</td>
             <td>
               <a :href="link.full_link" target="_blank">
-                {{ link.full_link.replace(/^http(s?):\/\//, "") }}</a
-              >
+                {{ link.full_link.replace(/^http(s?):\/\//, "") }}
+              </a>
             </td>
             <td>
-              <a
-                :href="`${useRuntimeConfig().public.appURL}/${link.short_link}`"
-                target="_blank"
-              >
-                {{
-                  useRuntimeConfig().public.appURL.replace(
-                    /^http(s?):\/\//,
-                    ""
-                  )
-                }}/{{ link.short_link }}
+              <a :href="`${useRuntimeConfig().public.appURL}/${link.short_link}`" target="_blank">
+                {{ useRuntimeConfig().public.appURL.replace(/^http(s?):\/\//, "") }}/{{ link.short_link }}
               </a>
             </td>
             <td>{{ link.views }}</td>
             <td>
-              <NuxtLink class="no-underline" :to="`/links/${link.id}`"
-                ><iconEdit
-              /></NuxtLink>
+              <NuxtLink class="no-underline" :to="`/links/${link.id}`">
+                <IconEdit/>
+              </NuxtLink>
             </td>
             <td>
               <button><IconTrash /></button>
@@ -87,10 +66,7 @@ const links = [
     </div>
 
     <!-- No links message for when table is empty -->
-    <div
-      v-else
-      class="border-dashed border-gray-500 p-3 border-[1px] text-center"
-    >
+    <div v-else class="border-dashed border-gray-500 p-3 border-[1px] text-center">
       <div class="flex justify-center">
         <IconLink />
       </div>
@@ -101,9 +77,7 @@ const links = [
         <!-- Show this if reason for no links is User has none -->
         <span v-else>
           No links created yet
-          <NuxtLink to="/links/create" class="text-green-600"
-            >Go create your first link!</NuxtLink
-          >
+          <NuxtLink to="/links/create" class="text-green-600">Go create your first link!</NuxtLink>
         </span>
       </p>
     </div>
