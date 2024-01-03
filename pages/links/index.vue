@@ -36,7 +36,7 @@ async function getLinks() {
       <h1 class="mb-0">My Links</h1>
       <div class="flex items-center">
         <SearchInput v-model="queries['filter[full_link]']" />
-        <NuxtLink to="/links/create" class="ml-4">
+        <NuxtLink to="/links/create" class="ml-4 flex gap-1">
           <IconPlusCircle class="inline" /> Create New
         </NuxtLink>
       </div>
