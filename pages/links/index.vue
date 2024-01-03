@@ -1,47 +1,54 @@
 <script setup lang="ts">
-definePageMeta({
-  middleware: ['auth']
+import axios from 'axios';
+import { TailwindPagination } from 'laravel-vue-pagination'
+import type { PaginatedResponse, Link } from '@/types'
+
+definePageMeta({ middleware: ['auth'] })
+
+const data = ref<PaginatedResponse<Link> | null>(null)
+
+const queries = ref({
+  page: 1,
+  'filter[full_link]': '',
+  ...useRoute().query
 })
 
-const links = [
-  {
-    short_link: "234jlsfsf",
-    full_link: "https://vueschool.io",
-    views: 3,
-    id: 1,
-  },
-  {
-    short_link: "adfaowerw",
-    full_link: "https://google.com",
-    views: 1,
-    id: 2,
-  },
-  {
-    short_link: "234sfdjaip",
-    full_link: "https://vuejsnation.com/",
-    views: 0,
-    id: 3,
-  },
-];
+await getLinks()
+const links = computed(() => data.value?.data)
+
+watch(queries, async () => {
+  getLinks()
+  useRouter().push({query: queries.value})
+}, { deep: true })
+
+async function getLinks() {
+  // @ts-expect-error page is number and that's ok
+  const queryString = new URLSearchParams(queries.value)
+  const { data: resData } = await axios.get(`/links?${queryString}`)
+  data.value = resData
+}
+
 </script>
+
 <template>
   <div>
     <nav class="flex justify-between mb-4 items-center">
       <h1 class="mb-0">My Links</h1>
       <div class="flex items-center">
-        <SearchInput modelValue="" />
-        <NuxtLink to="/links/create" class="ml-4">
+        <SearchInput v-model="queries['filter[full_link]']" />
+        <NuxtLink to="/links/create" class="ml-4 flex gap-1">
           <IconPlusCircle class="inline" /> Create New
         </NuxtLink>
       </div>
     </nav>
 
     <div v-if="true">
-      <table class="table-fixed w-full">
+      <table class="mb-2 table-fixed w-full">
         <thead>
           <tr>
+            <th class="w-[5%]">N</th>
             <th class="w-[35%]">Full Link</th>
-            <th class="w-[35%]">Short Link</th>
+            <th class="w-[30%]">Short Link</th>
             <th class="w-[10%]">Views</th>
             <th class="w-[10%]">Edit</th>
             <th class="w-[10%]">Trash</th>
@@ -51,30 +58,23 @@ const links = [
           </tr>
         </thead>
         <tbody>
-          <tr v-for="link in links">
+          <tr v-for="(link, index) in links">
+            <td>{{ index + 1 }}</td>
             <td>
               <a :href="link.full_link" target="_blank">
-                {{ link.full_link.replace(/^http(s?):\/\//, "") }}</a
-              >
+                {{ link.full_link.replace(/^http(s?):\/\//, "") }}
+              </a>
             </td>
             <td>
-              <a
-                :href="`${useRuntimeConfig().public.appURL}/${link.short_link}`"
-                target="_blank"
-              >
-                {{
-                  useRuntimeConfig().public.appURL.replace(
-                    /^http(s?):\/\//,
-                    ""
-                  )
-                }}/{{ link.short_link }}
+              <a :href="`${useRuntimeConfig().public.appURL}/${link.short_link}`" target="_blank">
+                {{ useRuntimeConfig().public.appURL.replace(/^http(s?):\/\//, "") }}/{{ link.short_link }}
               </a>
             </td>
             <td>{{ link.views }}</td>
             <td>
-              <NuxtLink class="no-underline" :to="`/links/${link.id}`"
-                ><iconEdit
-              /></NuxtLink>
+              <NuxtLink class="no-underline" :to="`/links/${link.id}`">
+                <IconEdit/>
+              </NuxtLink>
             </td>
             <td>
               <button><IconTrash /></button>
@@ -83,14 +83,15 @@ const links = [
           </tr>
         </tbody>
       </table>
+      <TailwindPagination 
+        :data="data"
+        @pagination-change-page="queries.page = $event"
+      />
       <div class="mt-5 flex justify-center"></div>
     </div>
 
     <!-- No links message for when table is empty -->
-    <div
-      v-else
-      class="border-dashed border-gray-500 p-3 border-[1px] text-center"
-    >
+    <div v-else class="border-dashed border-gray-500 p-3 border-[1px] text-center">
       <div class="flex justify-center">
         <IconLink />
       </div>
@@ -101,9 +102,7 @@ const links = [
         <!-- Show this if reason for no links is User has none -->
         <span v-else>
           No links created yet
-          <NuxtLink to="/links/create" class="text-green-600"
-            >Go create your first link!</NuxtLink
-          >
+          <NuxtLink to="/links/create" class="text-green-600">Go create your first link!</NuxtLink>
         </span>
       </p>
     </div>
