@@ -8,7 +8,7 @@ const queries = ref({
   ...useRoute().query
 })
 
-const { data, index: getLinks } = useLinks({ queries }) // we pass whole reactive queries here
+const { data, index: getLinks, destroy } = useLinks({ queries }) // we pass whole reactive queries here
 
 await getLinks()
 const links = computed(() => data.value?.data)
@@ -17,8 +17,14 @@ watch(queries, () => useRouter().push({query: queries.value}),
   { deep: true }
 )
 
-
 definePageMeta({ middleware: ['auth'] })
+
+async function handleDelete(id:number) {
+  await destroy(id)
+  if(data.value) {
+    data.value.data = data.value.data.filter(link => link.id !== id)
+  }
+}
 </script>
 
 <template>
@@ -68,7 +74,7 @@ definePageMeta({ middleware: ['auth'] })
               </NuxtLink>
             </td>
             <td>
-              <button><IconTrash /></button>
+              <button @click="handleDelete(link.id)"><IconTrash /></button>
             </td>
             <td></td>
           </tr>
