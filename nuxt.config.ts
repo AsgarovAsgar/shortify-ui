@@ -13,11 +13,11 @@ export default defineNuxtConfig({
       appURL: "http://localhost",
     },
   },
-  ssr: false,
-  // routeRules: {
-  //   "/profiles/*": { swr: true },
-  //   "/*": { ssr: false },
-  // },
+  // ssr: false,
+  routeRules: {
+    "/profiles/*": { swr: true },
+    "/*": { ssr: false },
+  },
   
   vite: {
     server: {

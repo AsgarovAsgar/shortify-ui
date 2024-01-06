@@ -1,11 +1,6 @@
 <script setup lang="ts">
-import axios from 'axios';
 import { TailwindPagination } from 'laravel-vue-pagination'
-import type { PaginatedResponse, Link } from '@/types'
 
-definePageMeta({ middleware: ['auth'] })
-
-const data = ref<PaginatedResponse<Link> | null>(null)
 
 const queries = ref({
   page: 1,
@@ -13,21 +8,23 @@ const queries = ref({
   ...useRoute().query
 })
 
+const { data, index: getLinks, destroy } = useLinks({ queries }) // we pass whole reactive queries here
+
 await getLinks()
 const links = computed(() => data.value?.data)
 
-watch(queries, async () => {
-  getLinks()
-  useRouter().push({query: queries.value})
-}, { deep: true })
+watch(queries, () => useRouter().push({query: queries.value}), 
+  { deep: true }
+)
 
-async function getLinks() {
-  // @ts-expect-error page is number and that's ok
-  const queryString = new URLSearchParams(queries.value)
-  const { data: resData } = await axios.get(`/links?${queryString}`)
-  data.value = resData
+definePageMeta({ middleware: ['auth'] })
+
+async function handleDelete(id:number) {
+  await destroy(id)
+  if(data.value) {
+    data.value.data = data.value.data.filter(link => link.id !== id)
+  }
 }
-
 </script>
 
 <template>
@@ -53,7 +50,7 @@ async function getLinks() {
             <th class="w-[10%]">Edit</th>
             <th class="w-[10%]">Trash</th>
             <th class="w-[6%] text-center">
-              <button><IconRefresh /></button>
+              <button @click="getLinks()"><IconRefresh /></button>
             </th>
           </tr>
         </thead>
@@ -77,7 +74,7 @@ async function getLinks() {
               </NuxtLink>
             </td>
             <td>
-              <button><IconTrash /></button>
+              <button @click="handleDelete(link.id)"><IconTrash /></button>
             </td>
             <td></td>
           </tr>
