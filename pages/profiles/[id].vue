@@ -16,7 +16,7 @@ if(error.value) {
     <h1>😊 {{ profile.user.name }} Links</h1>
     <ul class="list-disc list-inside ml-10">
       <li v-for="link in profile.links" :key="link.short_link">
-        <a :href="`localhost://${link.short_link}`">{{ `localhost://${link.short_link}` }}</a>
+        <a :href="`http://localhost/${link.short_link}`">{{ `http://localhost/${link.short_link}` }}</a>
       </li>
       <li v-if="!profile.links.length">No links</li>
     </ul>
